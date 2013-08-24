@@ -5,7 +5,7 @@ var Player = function(startX, startY) {
 	var x = startX,
 		y = startY,
 		id,
-		moveAmount = 2;
+		moveAmount = 10;
 	
 	var getX = function() {
 		return x;
@@ -45,7 +45,7 @@ var Player = function(startX, startY) {
 	};
 
 	var draw = function(ctx) {
-		ctx.fillRect(x-5, y-5, 10, 10);
+		ctx.fillRect(x, y, 10, 10);
 	};
 
 	return {
