@@ -2,7 +2,7 @@ var Player = function (startX, startY, startColor, startStatus) {
     var x = startX;
     var y = startY;
     var color = (startColor) ? startColor : "#666666";
-    var status = startStatus;
+    var status = (startStatus) ? startStatus : 0;
     var id;
 
     var getX = function () {

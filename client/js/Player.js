@@ -2,7 +2,7 @@
 ** GAME PLAYER CLASS
 **************************************************/
 
-var PixelSize = 10;
+var PixelSize = 40;
 var EFFICIENT_DRAW = false;
 
 var Player = function (startX, startY, startColor, startStatus) {
@@ -11,7 +11,7 @@ var Player = function (startX, startY, startColor, startStatus) {
     var prevX = x;
     var prevY = y;
     var color = (startColor) ? startColor : "#666666";
-    var status = (startStatus) ? startStatus : 0.0;
+    var status = (startStatus) ? startStatus : 0;
     var border = { Top: 1, Right: 1, Left: 1, Bottom: 1 };
     var id;
 
@@ -34,25 +34,25 @@ var Player = function (startX, startY, startColor, startStatus) {
     var getBorder = function () {
         return border;
     }
-    
-    var getPrevX = function() {
+
+    var getPrevX = function () {
         return prevX;
     }
-    
-    var getPrevY = function() {
+
+    var getPrevY = function () {
         return prevY;
     }
-    
+
     var setX = function (newX) {
-    	if(newX < 0)
-    		return;
+        if (newX < 0)
+            return;
         prevX = x;
         x = newX;
     }
 
     var setY = function (newY) {
-    	if(newY < 0)
-    		return;
+        if (newY < 0)
+            return;
         prevY = y;
         y = newY;
     }
@@ -103,8 +103,8 @@ var Player = function (startX, startY, startColor, startStatus) {
 
     var pixel = function (ctx) {
         // draw block
-		ctx.fillStyle = color;
-		ctx.fillRect(x * PixelSize, y * PixelSize, PixelSize, PixelSize);
+        ctx.fillStyle = color;
+        ctx.fillRect(x * PixelSize, y * PixelSize, PixelSize, PixelSize);
 
         // draw lines (borders + status)
         ctx.lineWidth = 1;
@@ -112,18 +112,18 @@ var Player = function (startX, startY, startColor, startStatus) {
         // draw borders
         ctx.strokeStyle = "#000000";
         ctx.beginPath();
-        ctx.moveTo(x, y);
+        ctx.moveTo(x * PixelSize, y * PixelSize);
 
         if (border.Top == 1) {
-            ctx.lineTo(x * PixelSize + PixelSize, y * PixelSize);
+            ctx.lineTo((x + 1) * PixelSize, y * PixelSize);
         }
 
         if (border.Right == 1) {
-            ctx.lineTo(x * PixelSize + PixelSize, y * PixelSize + PixelSize);
+            ctx.lineTo((x + 1) * PixelSize, (y + 1) * PixelSize);
         }
 
         if (border.Bottom == 1) {
-            ctx.lineTo(x * PixelSize, y * PixelSize + PixelSize);
+            ctx.lineTo(x * PixelSize, (y + 1) * PixelSize);
         }
 
         if (border.Left == 1) {
@@ -143,19 +143,14 @@ var Player = function (startX, startY, startColor, startStatus) {
         //            ctx.strokeStyle = "rgba(" + colorComponents.r + ", " + colorComponents.g + ", " + colorComponents.b + ", " + status + ")";
         ctx.strokeStyle = "rgba(" + 0 + ", " + 0 + ", " + 0 + ", " + status + ")";
         //        }
-        ctx.moveTo(x * PixelSize + 3, y * PixelSize + 3);
-        ctx.lineTo(x * PixelSize + PixelSize - 3, y * PixelSize + 3);
-        ctx.lineTo(x * PixelSize + PixelSize - 3, y * PixelSize + PixelSize - 3);
-        ctx.lineTo(x * PixelSize + 3, y * PixelSize + PixelSize - 3);
-        ctx.lineTo(x * PixelSize + 3, y * PixelSize + 3);
+        ctx.rect(x * PixelSize + Math.round(PixelSize / 3), y * PixelSize + Math.round(PixelSize / 3), Math.round(PixelSize / 3), Math.round(PixelSize / 3));
 
         ctx.stroke();
-
     }
 
     var draw = function (ctx) {
         if (EFFICIENT_DRAW == true) {
-        	ctx.clearRect(prevX * PixelSize, prevY * PixelSize, PixelSize, PixelSize);
+            ctx.clearRect(prevX * PixelSize, prevY * PixelSize, PixelSize, PixelSize);
         }
 
         pixel(ctx);
