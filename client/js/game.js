@@ -8,8 +8,8 @@ var canvas,            // Canvas DOM element
     remotePlayers,
     socket;
 
-var HOST = "http://share.ligaac.ro";
-//var HOST = "http://127.0.0.1";
+//var HOST = "http://share.ligaac.ro";
+var HOST = "http://127.0.0.1";
 
 var EFFICIENT_DRAW = false;
 
@@ -68,8 +68,8 @@ function init() {
     }
 
     remotePlayers = [];
-    socket = io.connect(HOST, { port: 8000, transports: ["websocket"] });
     remotePlayers.push(localPlayer);
+    socket = io.connect(HOST, { port: 8000, transports: ["websocket"] });
 
     // Start listening for events
     setEventHandlers();
@@ -109,10 +109,10 @@ var setEventHandlers = function () {
 
 // Win
 function onWin(e) {
-    if (localPlayer) {
+    if (e == null) {
         console.log("Win!");
         location.reload();
-    };
+    }
 };
 
 // Keyboard key down

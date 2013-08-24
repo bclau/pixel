@@ -76,7 +76,7 @@ function onMovePlayer(data) {
 };
 
 function onWin(data) {
-	
+    this.broadcast.emit("win", null);
 }
 
 function playerById(id) {
