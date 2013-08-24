@@ -8,6 +8,8 @@ var canvas,            // Canvas DOM element
     remotePlayers,
     socket;
 
+var PixelSize = 5;
+
 /**************************************************
 ** GAME INITIALISATION
 **************************************************/
@@ -26,8 +28,8 @@ function init() {
     // Calculate a random start position for the local player
     // The minus 10 (half a player size) stops the player being
     // placed right on the egde of the screen
-    var startX = (Math.round(Math.random()*(canvas.width - 10) / 10)) * 10;
-    var startY = (Math.round(Math.random()*(canvas.height - 10) / 10)) * 10;
+    var startX = (Math.round(Math.random() * (canvas.width - PixelSize) / PixelSize)) * PixelSize;
+    var startY = (Math.round(Math.random() * (canvas.height - PixelSize) / PixelSize)) * PixelSize;
 
     // Initialise the local player
     localPlayer = new Player(startX, startY);
@@ -152,14 +154,16 @@ function grid_draw() {
     var gridx = 0;
     var gridy = 0;
 
-    for(gridx = 0; gridx < canvas.width; gridx = gridx + 10) {
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = '#CCCCCC';
+    for (gridx = 0; gridx < canvas.width; gridx = gridx + PixelSize) {
         ctx.beginPath();
         ctx.moveTo(gridx, 0);
         ctx.lineTo(gridx, canvas.height);
         ctx.stroke();
     };
 
-    for(gridy = 0; gridy < canvas.height; gridy = gridy + 10) {
+    for (gridy = 0; gridy < canvas.height; gridy = gridy + PixelSize) {
         ctx.beginPath();
         ctx.moveTo(0, gridy);
         ctx.lineTo(canvas.width, gridy);
