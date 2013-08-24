@@ -73,6 +73,8 @@ var setEventHandlers = function() {
     socket.on("new player", onNewPlayer);
     socket.on("move player", onMovePlayer);
     socket.on("remove player", onRemovePlayer);
+
+    window.setInterval(function () { update() }, 100);
 };
 
 // Keyboard key down
@@ -148,7 +150,7 @@ function animate() {
 
     if (KeyTimer >= KeyTimerMax) {
         KeyTimer = 0;
-        update();
+//        update();
     }
 
     if (EFFICIENT_DRAW == false) {
