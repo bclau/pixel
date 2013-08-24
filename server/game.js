@@ -30,6 +30,7 @@ function onSocketConnection(client) {
     client.on("disconnect", onClientDisconnect);
     client.on("new player", onNewPlayer);
     client.on("move player", onMovePlayer);
+    client.on("win", onWin);
 }
 
 function onClientDisconnect() {
@@ -73,6 +74,10 @@ function onMovePlayer(data) {
     this.broadcast.emit("move player", { id: movePlayer.id, x: movePlayer.getX(), y: movePlayer.getY(), color: movePlayer.getColor(), status: movePlayer.getStatus() });
 
 };
+
+function onWin(data) {
+	
+}
 
 function playerById(id) {
     var i;

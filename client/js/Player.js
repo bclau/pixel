@@ -11,7 +11,7 @@ var Player = function (startX, startY, startColor, startStatus) {
     var prevX = x;
     var prevY = y;
     var color = (startColor) ? startColor : "#666666";
-    var status = startStatus;
+    var status = (startStatus) ? startStatus : 0.0;
     var border = { Top: 1, Right: 1, Left: 1, Bottom: 1 };
     var id;
 
@@ -34,13 +34,25 @@ var Player = function (startX, startY, startColor, startStatus) {
     var getBorder = function () {
         return border;
     }
-
+    
+    var getPrevX = function() {
+        return prevX;
+    }
+    
+    var getPrevY = function() {
+        return prevY;
+    }
+    
     var setX = function (newX) {
+    	if(newX < 0)
+    		return;
         prevX = x;
         x = newX;
     }
 
     var setY = function (newY) {
+    	if(newY < 0)
+    		return;
         prevY = y;
         y = newY;
     }
@@ -62,17 +74,17 @@ var Player = function (startX, startY, startColor, startStatus) {
         prevY = y;
 
         // Up key takes priority over down
-        if (keys.up && y >= PixelSize) {
-            y -= PixelSize;
+        if (keys.up && y >= 1) {
+            y -= 1;
         } else if (keys.down) {
-            y += PixelSize;
+            y += 1;
         };
 
         // Left key takes priority over right
-        if (keys.left && x >= PixelSize) {
-            x -= PixelSize;
+        if (keys.left && x >= 1) {
+            x -= 1;
         } else if (keys.right) {
-            x += PixelSize;
+            x += 1;
         };
 
         return (prevX != x || prevY != y) ? true : false;
@@ -91,8 +103,8 @@ var Player = function (startX, startY, startColor, startStatus) {
 
     var pixel = function (ctx) {
         // draw block
-        ctx.fillStyle = color;
-        ctx.fillRect(x, y, PixelSize, PixelSize);
+		ctx.fillStyle = color;
+		ctx.fillRect(x * PixelSize, y * PixelSize, PixelSize, PixelSize);
 
         // draw lines (borders + status)
         ctx.lineWidth = 1;
@@ -103,19 +115,19 @@ var Player = function (startX, startY, startColor, startStatus) {
         ctx.moveTo(x, y);
 
         if (border.Top == 1) {
-            ctx.lineTo(x + PixelSize, y);
+            ctx.lineTo(x * PixelSize + PixelSize, y * PixelSize);
         }
 
         if (border.Right == 1) {
-            ctx.lineTo(x + PixelSize, y + PixelSize);
+            ctx.lineTo(x * PixelSize + PixelSize, y * PixelSize + PixelSize);
         }
 
         if (border.Bottom == 1) {
-            ctx.lineTo(x, y + PixelSize);
+            ctx.lineTo(x * PixelSize, y * PixelSize + PixelSize);
         }
 
         if (border.Left == 1) {
-            ctx.lineTo(x, y);
+            ctx.lineTo(x * PixelSize, y * PixelSize);
         }
         ctx.stroke();
 
@@ -131,11 +143,11 @@ var Player = function (startX, startY, startColor, startStatus) {
         //            ctx.strokeStyle = "rgba(" + colorComponents.r + ", " + colorComponents.g + ", " + colorComponents.b + ", " + status + ")";
         ctx.strokeStyle = "rgba(" + 0 + ", " + 0 + ", " + 0 + ", " + status + ")";
         //        }
-        ctx.moveTo(x + 3, y + 3);
-        ctx.lineTo(x + PixelSize - 3, y + 3);
-        ctx.lineTo(x + PixelSize - 3, y + PixelSize - 3);
-        ctx.lineTo(x + 3, y + PixelSize - 3);
-        ctx.lineTo(x + 3, y + 3);
+        ctx.moveTo(x * PixelSize + 3, y * PixelSize + 3);
+        ctx.lineTo(x * PixelSize + PixelSize - 3, y * PixelSize + 3);
+        ctx.lineTo(x * PixelSize + PixelSize - 3, y * PixelSize + PixelSize - 3);
+        ctx.lineTo(x * PixelSize + 3, y * PixelSize + PixelSize - 3);
+        ctx.lineTo(x * PixelSize + 3, y * PixelSize + 3);
 
         ctx.stroke();
 
@@ -143,7 +155,7 @@ var Player = function (startX, startY, startColor, startStatus) {
 
     var draw = function (ctx) {
         if (EFFICIENT_DRAW == true) {
-            ctx.clearRect(prevX, prevY, PixelSize, PixelSize);
+        	ctx.clearRect(prevX * PixelSize, prevY * PixelSize, PixelSize, PixelSize);
         }
 
         pixel(ctx);
@@ -155,6 +167,8 @@ var Player = function (startX, startY, startColor, startStatus) {
         getColor: getColor,
         getStatus: getStatus,
         getBorder: getBorder,
+        getPrevX: getPrevX,
+        getPrevY: getPrevY,
         setX: setX,
         setY: setY,
         setColor: setColor,
