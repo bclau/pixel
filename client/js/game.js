@@ -27,13 +27,13 @@ function init() {
 
     // Initialise keyboard controls
     keys = new Keys();
-/*
-    var url = require('url');
-    var url_parts = url.parse(request.url, true);
-    var query = url_parts.query;
-
-    PixelSize = query.pixelsize;
-    */
+    /*
+        var url = require('url');
+        var url_parts = url.parse(request.url, true);
+        var query = url_parts.query;
+    
+        PixelSize = query.pixelsize;
+        */
     // Calculate a random start position for the local player
     // The minus 10 (half a player size) stops the player being
     // placed right on the egde of the screen
@@ -41,12 +41,14 @@ function init() {
     var startY = (Math.round(Math.random() * (canvas.height - PixelSize) / PixelSize)) * PixelSize;
 
     // Initialise the local player
-    localPlayer = new Player(startX, startY, "#CC0000");
-    localPlayer.draw(ctx);
-    
+    localPlayer = new Player(startX, startY, "rgba(" + Math.round(Math.random() * 224 + 31) + "," + Math.round(Math.random() * 224 + 31) + "," + Math.round(Math.random() * 224 + 31) + ", 1.0)", 0.0);
+    if (EFFICIENT_DRAW == true) {
+        localPlayer.draw(ctx);
+    }
+
     remotePlayers = [];
-    
-    socket = io.connect(HOST, {port: 8000, transports:["websocket"]});
+
+    socket = io.connect(HOST, { port: 8000, transports: ["websocket"] });
 
     // Start listening for events
     setEventHandlers();
@@ -56,14 +58,14 @@ function init() {
 /**************************************************
 ** GAME EVENT HANDLERS
 **************************************************/
-var setEventHandlers = function() {
+var setEventHandlers = function () {
     // Keyboard
     window.addEventListener("keydown", onKeydown, false);
     window.addEventListener("keyup", onKeyup, false);
 
     // Window resize
     window.addEventListener("resize", onResize, false);
-    
+
     //Socket events
     socket.on("connect", onSocketConnected);
     socket.on("disconnect", onSocketDisconnect);
@@ -97,7 +99,7 @@ function onResize(e) {
 
 function onSocketConnected() {
     console.log("Connected to socket server");
-    socket.emit("new player", {x: localPlayer.getX(), y: localPlayer.getY()});
+    socket.emit("new player", { x: localPlayer.getX(), y: localPlayer.getY(), color: localPlayer.getColor(), status: localPlayer.getStatus() });
 }
 
 function onSocketDisconnect() {
@@ -105,11 +107,11 @@ function onSocketDisconnect() {
 }
 
 function onNewPlayer(data) {
-    console.log("New player connected: "+ data.id);
-    
-    var newPlayer = new Player(data.x, data.y);
+    console.log("New player connected: " + data.id);
+
+    var newPlayer = new Player(data.x, data.y, data.color, data.status);
     newPlayer.id = data.id;
-    
+
     remotePlayers.push(newPlayer);
 }
 
@@ -130,12 +132,12 @@ function onMovePlayer(data) {
 
 function onRemovePlayer(data) {
     var removePlayer = playerById(data.id);
-    
+
     if (!removePlayer) {
-        console.log("Player not found: "+data.id);
+        console.log("Player not found: " + data.id);
         return;
     }
-    
+
     remotePlayers.splice(remotePlayers.indexOf(removePlayer), 1);
 }
 
@@ -159,7 +161,8 @@ function update() {
         if (EFFICIENT_DRAW == true) {
             localPlayer.draw(ctx);
         }
-        socket.emit("move player", { x: localPlayer.getX(), y: localPlayer.getY() });
+
+        socket.emit("move player", { x: localPlayer.getX(), y: localPlayer.getY(), color: localPlayer.getColor(), status: localPlayer.getStatus() });
     }
 };
 
@@ -207,11 +210,11 @@ function draw() {
 
 function playerById(id) {
     var i;
-    
+
     for (i = 0; i < remotePlayers.length; i++) {
         if (remotePlayers[i].id == id)
             return remotePlayers[i];
     };
-    
+
     return false;
 }

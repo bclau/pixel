@@ -5,36 +5,62 @@
 var PixelSize = 10;
 var EFFICIENT_DRAW = false;
 
-var Player = function(startX, startY, pixelColor) {
-    var x = startX,
-        y = startY,
-        prevX = x,
-        prevY = y,
-        color = (pixelColor)?pixelColor:"#666666",
-        id
-    
-    var getX = function() {
+var Player = function (startX, startY, startColor, startStatus) {
+    var x = startX;
+    var y = startY;
+    var prevX = x;
+    var prevY = y;
+    var color = (startColor) ? startColor : "#666666";
+    var status = startStatus;
+    var border = { Top: 1, Right: 1, Left: 1, Bottom: 1 };
+    var id;
+
+    var getX = function () {
         return x;
     }
-    
-    var getY = function() {
+
+    var getY = function () {
         return y;
     }
-    
+
+    var getColor = function () {
+        return color;
+    }
+
+    var getStatus = function () {
+        return status;
+    }
+
+    var getBorder = function () {
+        return border;
+    }
+
     var setX = function (newX) {
         prevX = x;
         x = newX;
     }
-    
+
     var setY = function (newY) {
         prevY = y;
         y = newY;
     }
-    
-    var update = function(keys) {
+
+    var setColor = function (newColor) {
+        color = newColor;
+    }
+
+    var setStatus = function (newStatus) {
+        status = newStatus;
+    }
+
+    var setBorder = function (newBorder) {
+        border = newBorder;
+    }
+
+    var update = function (keys) {
         prevX = x,
         prevY = y;
-        
+
         // Up key takes priority over down
         if (keys.up && y >= PixelSize) {
             y -= PixelSize;
@@ -48,20 +74,22 @@ var Player = function(startX, startY, pixelColor) {
         } else if (keys.right) {
             x += PixelSize;
         };
-        
+
         return (prevX != x || prevY != y) ? true : false;
     };
 
-    var hexToRGB = function(hex) {
-        var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-        return result ? {
-            r: parseInt(result[1], 16),
-            g: parseInt(result[2], 16),
-            b: parseInt(result[3], 16)
-        } : null;
-    }
+    /*
+        var hexToRGB = function(hex) {
+            var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : null;
+        }
+    */
 
-    var pixel = function (ctx, color, status, border) {
+    var pixel = function (ctx) {
         // draw block
         ctx.fillStyle = color;
         ctx.fillRect(x, y, PixelSize, PixelSize);
@@ -96,13 +124,13 @@ var Player = function(startX, startY, pixelColor) {
         ctx.beginPath();
         //        var colorComponents = hexToRGB(color);
 
-//        if (colorComponents == null) {
-//            ctx.strokeStyle = color;
-//        }
-//        else {
-//            ctx.strokeStyle = "rgba(" + colorComponents.r + ", " + colorComponents.g + ", " + colorComponents.b + ", " + status + ")";
-            ctx.strokeStyle = "rgba(" + 0 + ", " + 0 + ", " + 0 + ", " + status + ")";
-//        }
+        //        if (colorComponents == null) {
+        //            ctx.strokeStyle = color;
+        //        }
+        //        else {
+        //            ctx.strokeStyle = "rgba(" + colorComponents.r + ", " + colorComponents.g + ", " + colorComponents.b + ", " + status + ")";
+        ctx.strokeStyle = "rgba(" + 0 + ", " + 0 + ", " + 0 + ", " + status + ")";
+        //        }
         ctx.moveTo(x + 3, y + 3);
         ctx.lineTo(x + PixelSize - 3, y + 3);
         ctx.lineTo(x + PixelSize - 3, y + PixelSize - 3);
@@ -118,14 +146,20 @@ var Player = function(startX, startY, pixelColor) {
             ctx.clearRect(prevX, prevY, PixelSize, PixelSize);
         }
 
-        pixel(ctx, color, 1, {Top: 1, Right: 1, Bottom: 1, Left: 1});
+        pixel(ctx);
     };
 
     return {
         getX: getX,
         getY: getY,
+        getColor: getColor,
+        getStatus: getStatus,
+        getBorder: getBorder,
         setX: setX,
         setY: setY,
+        setColor: setColor,
+        setStatus: setStatus,
+        setBorder: setBorder,
         update: update,
         draw: draw
     };
