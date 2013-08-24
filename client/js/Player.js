@@ -1,9 +1,12 @@
 /**************************************************
 ** GAME PLAYER CLASS
 **************************************************/
-var Player = function(startX, startY) {
+var Player = function(startX, startY, pixelColor) {
 	var x = startX,
 		y = startY,
+		prevX = x,
+		prevY = y,
+		color = (pixelColor)?pixelColor:'black',
 		id,
 		moveAmount = 2;
 	
@@ -16,16 +19,18 @@ var Player = function(startX, startY) {
 	}
 	
 	var setX = function (newX) {
+		prevX = x;
 		x = newX;
 	}
 	
 	var setY = function (newY) {
+		prevY = y;
 		y = newY;
 	}
 	
 	var update = function(keys) {
-		var prevX = x,
-			prevY = y;
+		prevX = x,
+		prevY = y;
 		
 		// Up key takes priority over down
 		if (keys.up) {
@@ -45,6 +50,8 @@ var Player = function(startX, startY) {
 	};
 
 	var draw = function(ctx) {
+		ctx.clearRect(prevX-5, prevY-5, 10, 10);
+		ctx.fillStyle = color;
 		ctx.fillRect(x-5, y-5, 10, 10);
 	};
 
@@ -55,5 +62,5 @@ var Player = function(startX, startY) {
 		setY: setY,
 		update: update,
 		draw: draw
-	}
+	};
 };
