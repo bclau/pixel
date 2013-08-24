@@ -3,6 +3,8 @@
 **************************************************/
 
 var PixelSize = 10;
+var EFFICIENT_DRAW = false;
+
 var Player = function(startX, startY, pixelColor) {
     var x = startX,
         y = startY,
@@ -50,8 +52,11 @@ var Player = function(startX, startY, pixelColor) {
         return (prevX != x || prevY != y) ? true : false;
     };
 
-    var draw = function(ctx) {
-        ctx.clearRect(prevX, prevY, PixelSize, PixelSize);
+    var draw = function (ctx) {
+        if (EFFICIENT_DRAW == true) {
+            ctx.clearRect(prevX, prevY, PixelSize, PixelSize);
+        }
+
         ctx.fillStyle = color;
         ctx.fillRect(x, y, PixelSize, PixelSize);
     };

@@ -53,6 +53,7 @@
     <AppxManifest Include="package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
+    <Content Include="client\index_local.html" />
     <Content Include="client\index.html" />
     <Content Include="client\js\game.js" />
     <Content Include="client\js\Keys.js" />
