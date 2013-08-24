@@ -43,7 +43,7 @@ function init() {
     
     remotePlayers = [];
     
-    socket = io.connect("http://10.0.0.181", {port: 8000, transports:["websocket"]});
+    socket = io.connect("http://share.ligaac.ro", {port: 8000, transports:["websocket"]});
 
     // Start listening for events
     setEventHandlers();
