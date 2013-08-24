@@ -38,8 +38,8 @@ function init() {
     var startY = (Math.round(Math.random() * (canvas.height - PixelSize) / PixelSize)) * PixelSize;
 
     // Initialise the local player
-	localPlayer = new Player(startX, startY, 'blue');
-	localPlayer.draw(ctx);
+    localPlayer = new Player(startX, startY, 'blue');
+    localPlayer.draw(ctx);
     
     remotePlayers = [];
     
@@ -100,25 +100,25 @@ function onSocketDisconnect() {
 }
 
 function onNewPlayer(data) {
-	console.log("New player connected: "+ data.id);
-	
-	var newPlayer = new Player(data.x, data.y);
-	newPlayer.id = data.id;
-	
-	remotePlayers.push(newPlayer);
+    console.log("New player connected: "+ data.id);
+    
+    var newPlayer = new Player(data.x, data.y);
+    newPlayer.id = data.id;
+    
+    remotePlayers.push(newPlayer);
 }
 
 function onMovePlayer(data) {
-	var movePlayer = playerById(data.id);
-	
-	if (!movePlayer) {
-		console.log("Player not found: "+ data.id);
-		return;
-	}
-	
-	movePlayer.setX(data.x);
-	movePlayer.setY(data.y);
-	movePlayer.draw(ctx);
+    var movePlayer = playerById(data.id);
+    
+    if (!movePlayer) {
+        console.log("Player not found: "+ data.id);
+        return;
+    }
+    
+    movePlayer.setX(data.x);
+    movePlayer.setY(data.y);
+    movePlayer.draw(ctx);
 }
 
 function onRemovePlayer(data) {
@@ -136,8 +136,8 @@ function onRemovePlayer(data) {
 ** GAME ANIMATION LOOP
 **************************************************/
 function animate() {
-	update();
-	//draw();
+    update();
+    //draw();
 
     // Request a new animation frame using Paul Irish's shim
     window.requestAnimFrame(animate);
@@ -148,10 +148,10 @@ function animate() {
 ** GAME UPDATE
 **************************************************/
 function update() {
-	if (localPlayer.update(keys)) {
-		localPlayer.draw(ctx);
-		socket.emit("move player", {x: localPlayer.getX(), y: localPlayer.getY()});
-	}
+    if (localPlayer.update(keys)) {
+        localPlayer.draw(ctx);
+        socket.emit("move player", {x: localPlayer.getX(), y: localPlayer.getY()});
+    }
 };
 
 /**************************************************
