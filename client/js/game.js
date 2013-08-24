@@ -38,7 +38,8 @@ function init() {
     var startY = (Math.round(Math.random() * (canvas.height - PixelSize) / PixelSize)) * PixelSize;
 
     // Initialise the local player
-    localPlayer = new Player(startX, startY);
+    localPlayer = new Player(startX, startY, 'blue');
+    localPlayer.draw(ctx);
     
     remotePlayers = [];
     
@@ -46,7 +47,6 @@ function init() {
 
     // Start listening for events
     setEventHandlers();
-    
 };
 
 
@@ -106,7 +106,6 @@ function onNewPlayer(data) {
     newPlayer.id = data.id;
     
     remotePlayers.push(newPlayer);
-
 }
 
 function onMovePlayer(data) {
@@ -119,6 +118,7 @@ function onMovePlayer(data) {
     
     movePlayer.setX(data.x);
     movePlayer.setY(data.y);
+    movePlayer.draw(ctx);
 }
 
 function onRemovePlayer(data) {
@@ -137,7 +137,7 @@ function onRemovePlayer(data) {
 **************************************************/
 function animate() {
     update();
-    draw();
+    //draw();
 
     // Request a new animation frame using Paul Irish's shim
     window.requestAnimFrame(animate);
@@ -149,6 +149,7 @@ function animate() {
 **************************************************/
 function update() {
     if (localPlayer.update(keys)) {
+        localPlayer.draw(ctx);
         socket.emit("move player", {x: localPlayer.getX(), y: localPlayer.getY()});
     }
 };
@@ -184,7 +185,7 @@ function grid_draw() {
 function draw() {
     // Wipe the canvas clean
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-     grid_draw();
+    grid_draw();
 
     // Draw the local player
     localPlayer.draw(ctx);
