@@ -13,6 +13,9 @@ var HOST = "http://share.ligaac.ro";
 //var HOST = "http://127.0.0.1";
 var EFFICIENT_DRAW = false;
 
+var KeyTimer = 0;
+var KeyTimerMax = 10;
+
 /**************************************************
 ** GAME INITIALISATION
 **************************************************/
@@ -141,7 +144,13 @@ function onRemovePlayer(data) {
 ** GAME ANIMATION LOOP
 **************************************************/
 function animate() {
-    update();
+    KeyTimer++;
+
+    if (KeyTimer >= KeyTimerMax) {
+        KeyTimer = 0;
+        update();
+    }
+
     if (EFFICIENT_DRAW == false) {
         draw();
     }
