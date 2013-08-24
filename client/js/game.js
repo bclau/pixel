@@ -8,7 +8,10 @@ var canvas,            // Canvas DOM element
     remotePlayers,
     socket;
 
-var PixelSize = 5;
+var PixelSize = 10;
+var HOST = "http://share.ligaac.ro";
+//var HOST = "http://127.0.0.1";
+var EFFICIENT_DRAW = false;
 
 /**************************************************
 ** GAME INITIALISATION
@@ -43,7 +46,7 @@ function init() {
     
     remotePlayers = [];
     
-    socket = io.connect("http://share.ligaac.ro", {port: 8000, transports:["websocket"]});
+    socket = io.connect(HOST, {port: 8000, transports:["websocket"]});
 
     // Start listening for events
     setEventHandlers();
@@ -110,15 +113,17 @@ function onNewPlayer(data) {
 
 function onMovePlayer(data) {
     var movePlayer = playerById(data.id);
-    
+
     if (!movePlayer) {
-        console.log("Player not found: "+ data.id);
+        console.log("Player not found: " + data.id);
         return;
     }
-    
+
     movePlayer.setX(data.x);
     movePlayer.setY(data.y);
-    movePlayer.draw(ctx);
+    if (EFFICIENT_DRAW == true) {
+        movePlayer.draw(ctx);
+    }
 }
 
 function onRemovePlayer(data) {
@@ -137,8 +142,9 @@ function onRemovePlayer(data) {
 **************************************************/
 function animate() {
     update();
-    //draw();
-
+    if (EFFICIENT_DRAW == false) {
+        draw();
+    }
     // Request a new animation frame using Paul Irish's shim
     window.requestAnimFrame(animate);
 };
@@ -149,8 +155,10 @@ function animate() {
 **************************************************/
 function update() {
     if (localPlayer.update(keys)) {
-        localPlayer.draw(ctx);
-        socket.emit("move player", {x: localPlayer.getX(), y: localPlayer.getY()});
+        if (EFFICIENT_DRAW == true) {
+            localPlayer.draw(ctx);
+        }
+        socket.emit("move player", { x: localPlayer.getX(), y: localPlayer.getY() });
     }
 };
 
@@ -176,7 +184,6 @@ function grid_draw() {
         ctx.lineTo(canvas.width, gridy);
         ctx.stroke();
     };
-
 }
 
 /**************************************************
@@ -187,13 +194,13 @@ function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     grid_draw();
 
-    // Draw the local player
-    localPlayer.draw(ctx);
-    
     var i;
     for (i = 0; i < remotePlayers.length; i++) {
         remotePlayers[i].draw(ctx);
     };
+
+    // Draw the local player
+    localPlayer.draw(ctx);
 };
 
 function playerById(id) {

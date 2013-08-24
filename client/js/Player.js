@@ -2,7 +2,7 @@
 ** GAME PLAYER CLASS
 **************************************************/
 
-var PixelSize = 5;
+var PixelSize = 10;
 var Player = function(startX, startY, pixelColor) {
     var x = startX,
         y = startY,
@@ -51,9 +51,9 @@ var Player = function(startX, startY, pixelColor) {
     };
 
     var draw = function(ctx) {
-        ctx.clearRect(prevX-5, prevY-5, 10, 10);
+        ctx.clearRect(prevX, prevY, PixelSize, PixelSize);
         ctx.fillStyle = color;
-        ctx.fillRect(x-5, y-5, 10, 10);
+        ctx.fillRect(x, y, PixelSize, PixelSize);
     };
 
     return {
