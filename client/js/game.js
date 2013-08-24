@@ -24,7 +24,13 @@ function init() {
 
     // Initialise keyboard controls
     keys = new Keys();
+/*
+    var url = require('url');
+    var url_parts = url.parse(request.url, true);
+    var query = url_parts.query;
 
+    PixelSize = query.pixelsize;
+    */
     // Calculate a random start position for the local player
     // The minus 10 (half a player size) stops the player being
     // placed right on the egde of the screen
