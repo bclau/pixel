@@ -41,7 +41,7 @@ function init() {
     var startY = (Math.round(Math.random() * (canvas.height - PixelSize) / PixelSize)) * PixelSize;
 
     // Initialise the local player
-    localPlayer = new Player(startX, startY, 'blue');
+    localPlayer = new Player(startX, startY, "#CC0000");
     localPlayer.draw(ctx);
     
     remotePlayers = [];
@@ -171,20 +171,21 @@ function grid_draw() {
     var gridy = 0;
 
     ctx.lineWidth = 1;
-    ctx.strokeStyle = '#CCCCCC';
+    ctx.strokeStyle = "#DDDDDD";
+
+    ctx.beginPath();
+
     for (gridx = 0; gridx < canvas.width; gridx = gridx + PixelSize) {
-        ctx.beginPath();
         ctx.moveTo(gridx, 0);
         ctx.lineTo(gridx, canvas.height);
-        ctx.stroke();
     };
 
     for (gridy = 0; gridy < canvas.height; gridy = gridy + PixelSize) {
-        ctx.beginPath();
         ctx.moveTo(0, gridy);
         ctx.lineTo(canvas.width, gridy);
-        ctx.stroke();
     };
+
+    ctx.stroke();
 }
 
 /**************************************************

@@ -8,6 +8,11 @@ var canvas,            // Canvas DOM element
     remotePlayers,
     socket;
 
+var PixelSize = 10;
+//var HOST = "http://share.ligaac.ro";
+var HOST = "http://127.0.0.1";
+var EFFICIENT_DRAW = false;
+
 /**************************************************
 ** GAME INITIALISATION
 **************************************************/
@@ -22,23 +27,29 @@ function init() {
 
     // Initialise keyboard controls
     keys = new Keys();
+/*
+    var url = require('url');
+    var url_parts = url.parse(request.url, true);
+    var query = url_parts.query;
 
+    PixelSize = query.pixelsize;
+    */
     // Calculate a random start position for the local player
     // The minus 10 (half a player size) stops the player being
     // placed right on the egde of the screen
-    var startX = (Math.round(Math.random()*(canvas.width - 10) / 10)) * 10;
-    var startY = (Math.round(Math.random()*(canvas.height - 10) / 10)) * 10;
+    var startX = (Math.round(Math.random() * (canvas.width - PixelSize) / PixelSize)) * PixelSize;
+    var startY = (Math.round(Math.random() * (canvas.height - PixelSize) / PixelSize)) * PixelSize;
 
     // Initialise the local player
-    localPlayer = new Player(startX, startY);
+    localPlayer = new Player(startX, startY, 'lightblue');
+    localPlayer.draw(ctx);
     
     remotePlayers = [];
     
-    socket = io.connect("http://10.0.0.181", {port: 8000, transports:["websocket"]});
+    socket = io.connect(HOST, {port: 8000, transports:["websocket"]});
 
     // Start listening for events
     setEventHandlers();
-    
 };
 
 
@@ -59,6 +70,8 @@ var setEventHandlers = function() {
     socket.on("new player", onNewPlayer);
     socket.on("move player", onMovePlayer);
     socket.on("remove player", onRemovePlayer);
+
+    window.setInterval(function () { update() }, 100);
 };
 
 // Keyboard key down
@@ -98,19 +111,21 @@ function onNewPlayer(data) {
     newPlayer.id = data.id;
     
     remotePlayers.push(newPlayer);
-
 }
 
 function onMovePlayer(data) {
     var movePlayer = playerById(data.id);
-    
+
     if (!movePlayer) {
-        console.log("Player not found: "+ data.id);
+        console.log("Player not found: " + data.id);
         return;
     }
-    
+
     movePlayer.setX(data.x);
     movePlayer.setY(data.y);
+    if (EFFICIENT_DRAW == true) {
+        movePlayer.draw(ctx);
+    }
 }
 
 function onRemovePlayer(data) {
@@ -128,9 +143,9 @@ function onRemovePlayer(data) {
 ** GAME ANIMATION LOOP
 **************************************************/
 function animate() {
-    update();
-    draw();
-
+    if (EFFICIENT_DRAW == false) {
+        draw();
+    }
     // Request a new animation frame using Paul Irish's shim
     window.requestAnimFrame(animate);
 };
@@ -141,7 +156,10 @@ function animate() {
 **************************************************/
 function update() {
     if (localPlayer.update(keys)) {
-        socket.emit("move player", {x: localPlayer.getX(), y: localPlayer.getY()});
+        if (EFFICIENT_DRAW == true) {
+            localPlayer.draw(ctx);
+        }
+        socket.emit("move player", { x: localPlayer.getX(), y: localPlayer.getY() });
     }
 };
 
@@ -152,20 +170,22 @@ function grid_draw() {
     var gridx = 0;
     var gridy = 0;
 
-    for(gridx = 0; gridx < canvas.width; gridx = gridx + 10) {
-        ctx.beginPath();
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = '#CCCCCC';
+
+    ctx.beginPath();
+
+    for (gridx = 0; gridx < canvas.width; gridx = gridx + PixelSize) {
         ctx.moveTo(gridx, 0);
         ctx.lineTo(gridx, canvas.height);
-        ctx.stroke();
     };
 
-    for(gridy = 0; gridy < canvas.height; gridy = gridy + 10) {
-        ctx.beginPath();
+    for (gridy = 0; gridy < canvas.height; gridy = gridy + PixelSize) {
         ctx.moveTo(0, gridy);
         ctx.lineTo(canvas.width, gridy);
-        ctx.stroke();
     };
 
+    ctx.stroke();
 }
 
 /**************************************************
@@ -174,15 +194,15 @@ function grid_draw() {
 function draw() {
     // Wipe the canvas clean
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-     grid_draw();
+    grid_draw();
 
-    // Draw the local player
-    localPlayer.draw(ctx);
-    
     var i;
     for (i = 0; i < remotePlayers.length; i++) {
         remotePlayers[i].draw(ctx);
     };
+
+    // Draw the local player
+    localPlayer.draw(ctx);
 };
 
 function playerById(id) {

@@ -1,0 +1,13 @@
+D:\Projects\Kaars\Hackatons\Summerhacks 23.08.2013\pixel\bin\Debug\resources.pri
+D:\Projects\Kaars\Hackatons\Summerhacks 23.08.2013\pixel\bin\Debug\AppxManifest.xml
+D:\Projects\Kaars\Hackatons\Summerhacks 23.08.2013\pixel\bin\Debug\pixel.build.appxrecipe
+D:\Projects\Kaars\Hackatons\Summerhacks 23.08.2013\pixel\bld\Debug\priconfig.xml.intermediate
+D:\Projects\Kaars\Hackatons\Summerhacks 23.08.2013\pixel\bld\Debug\layout.resfiles.intermediate
+D:\Projects\Kaars\Hackatons\Summerhacks 23.08.2013\pixel\bld\Debug\resources.resfiles.intermediate
+D:\Projects\Kaars\Hackatons\Summerhacks 23.08.2013\pixel\bld\Debug\pri.resfiles.intermediate
+D:\Projects\Kaars\Hackatons\Summerhacks 23.08.2013\pixel\bld\Debug\priconfig.xml
+D:\Projects\Kaars\Hackatons\Summerhacks 23.08.2013\pixel\bld\Debug\layout.resfiles
+D:\Projects\Kaars\Hackatons\Summerhacks 23.08.2013\pixel\bld\Debug\resources.resfiles
+D:\Projects\Kaars\Hackatons\Summerhacks 23.08.2013\pixel\bld\Debug\pri.resfiles
+D:\Projects\Kaars\Hackatons\Summerhacks 23.08.2013\pixel\bld\Debug\LanguageQualifiers.txt
+D:\Projects\Kaars\Hackatons\Summerhacks 23.08.2013\pixel\bld\Debug\ProjectArchitectures.txt
