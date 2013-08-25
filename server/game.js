@@ -5,9 +5,120 @@ var Player = require("./Player").Player;
 var socket;
 var players;
 
+var solution;
+var difficulty = 0;
+
+function init_solutions() {
+    solution = new Array(10);
+
+    // solution 1
+    solution[0] = new Array(2);
+    solution[0][0] = new Array(3);
+    solution[0][1] = new Array(3);
+
+    // solution 2
+    solution[1] = new Array(3);
+    solution[1][0] = new Array(3);
+    solution[1][1] = new Array(3);
+    solution[1][2] = new Array(3);
+
+    // solution 3
+    solution[2] = new Array(4);
+    solution[2][0] = new Array(3);
+    solution[2][1] = new Array(3);
+    solution[2][2] = new Array(3);
+    solution[2][2] = new Array(3);
+
+    // solution 4
+    solution[3] = new Array(4);
+    solution[3][0] = new Array(4);
+    solution[3][1] = new Array(4);
+    solution[3][2] = new Array(4);
+    solution[3][3] = new Array(4);
+
+    // solution 5
+    solution[4] = new Array(4);
+    solution[4][0] = new Array(5);
+    solution[4][1] = new Array(5);
+    solution[4][2] = new Array(5);
+    solution[4][3] = new Array(5);
+
+    // solution 6
+    solution[5] = new Array(5);
+    solution[5][0] = new Array(5);
+    solution[5][1] = new Array(5);
+    solution[5][2] = new Array(5);
+    solution[5][3] = new Array(5);
+    solution[5][4] = new Array(5);
+
+    // solution 7
+    solution[6] = new Array(5);
+    solution[6][0] = new Array(6);
+    solution[6][1] = new Array(6);
+    solution[6][2] = new Array(6);
+    solution[6][3] = new Array(6);
+    solution[6][4] = new Array(6);
+
+    // solution 8
+    solution[7] = new Array(6);
+    solution[7][0] = new Array(6);
+    solution[7][1] = new Array(6);
+    solution[7][2] = new Array(6);
+    solution[7][3] = new Array(6);
+    solution[7][4] = new Array(6);
+    solution[7][5] = new Array(6);
+
+    // solution 9
+    solution[8] = new Array(6);
+    solution[8][0] = new Array(7);
+    solution[8][1] = new Array(7);
+    solution[8][2] = new Array(7);
+    solution[8][3] = new Array(7);
+    solution[8][4] = new Array(7);
+    solution[8][5] = new Array(7);
+
+    // solution 9
+    solution[9] = new Array(7);
+    solution[9][0] = new Array(7);
+    solution[9][1] = new Array(7);
+    solution[9][2] = new Array(7);
+    solution[9][3] = new Array(7);
+    solution[9][4] = new Array(7);
+    solution[9][5] = new Array(7);
+    solution[9][6] = new Array(7);
+
+    setInterval(function () { handle_solution(); }, 1000);
+}
+
+function generate_solution(index) {
+    var x;
+    var y;
+
+    for (y = 0; y < solution[index].length; y++) {
+        for (x = 0; x < solution[index][y].length; x++) {
+            solution[index][y][x] = (Math.floor((Math.random() * 10000)) % 2) ? true : false;
+        }
+    }
+}
+
+var maxTimer = 5;
+var timer = 0;
+function handle_solution() {
+    timer++;
+
+    if (timer == maxTimer) {
+        console.log("out of time");
+        timer = 0;
+        //onWin("out of time");
+    }
+}
+
 function init() {
     //variable to hold the players
     players = [];
+
+    init_solutions();
+    generate_solution(difficulty);
 
     //Listen for connections on port 8000
     socket = io.listen(8000);
@@ -24,6 +135,7 @@ function init() {
 var setEventHandlers = function () {
     socket.sockets.on("connection", onSocketConnection);
 }
+
 
 function onSocketConnection(client) {
     util.log("New player has connected: " + client.id);
@@ -49,22 +161,22 @@ function onClientDisconnect() {
 };
 
 function onUpdateRequest(requester) {
-	var player = playerById(requester.id);
-	if(player)
-		this.emit("update score", {status: getStatus(player) });
+    var player = playerById(requester.id);
+    if (player)
+        this.emit("update score", { status: getStatus(player) });
 }
 
 function getStatus(player) {
-	var range = getMaxScore() - getMinScore();
-	return player.getScore() / (range > 0)? range: player.getScore();
+    var range = getMaxScore() - getMinScore();
+    return player.getScore() / (range > 0) ? range : player.getScore();
 }
 
 function getMinScore() {
-	return _getAbsoluteScore(players, lesser);
+    return _getAbsoluteScore(players, lesser);
 }
 
 function getMaxScore() {
-	return _getAbsoluteScore(players, bigger);
+    return _getAbsoluteScore(players, bigger);
 }
 
 lesser = function (a, b) {
@@ -95,7 +207,7 @@ function onNewPlayer(data) {
         existingPlayer = players[i];
         this.emit("new player", { id: existingPlayer.id, x: existingPlayer.getX(), y: existingPlayer.getY(), color: existingPlayer.getColor(), status: existingPlayer.getStatus() });
     }
-    
+
     players.push(newPlayer);
 };
 
@@ -115,15 +227,16 @@ function onMovePlayer(data) {
 };
 
 function onWin(data) {
-	var temp;
-	var winners = data.winners;
-	for(var i=0; i < winners.length; i++) {
-		temp = winners[i];
-		for(var j=0; j < players.length; j++)
-			if(temp.id == players[j].id)
-				players[j].incScore();
-	}
-	
+    var temp;
+    var winners = data.winners;
+
+    for (var i = 0; i < winners.length; i++) {
+        temp = winners[i];
+        for (var j = 0; j < players.length; j++)
+            if (temp.id == players[j].id)
+                players[j].incScore();
+    }
+
     this.broadcast.emit("win", data);
 }
 

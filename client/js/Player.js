@@ -5,7 +5,7 @@
 var PixelSize = 10;
 var EFFICIENT_DRAW = false;
 
-var canvasLimits = { Top: 220, Right: 25, Bottom: 20, Left: 55 };
+var canvasLimits = { Top: 20, Right: 25, Bottom: 20, Left: 55 };
 
 var Player = function (startX, startY, startColor, startStatus) {
     var x = startX;
@@ -13,7 +13,6 @@ var Player = function (startX, startY, startColor, startStatus) {
     var prevX = x;
     var prevY = y;
     var color = (startColor) ? startColor : "#666666";
-    var score = 0;
     var status = (startStatus) ? startStatus : 0;
     var border = { Top: 1, Right: 1, Left: 1, Bottom: 1 };
     var id;
@@ -65,19 +64,19 @@ var Player = function (startX, startY, startColor, startStatus) {
     }
 
     var setStatus = function (newStatus) {
-        status = (newStatus && newStatus >= 0 && newStatus <= 1)? newStatus: status;
+        status = (newStatus && newStatus >= 0 && newStatus <= 1) ? newStatus : status;
     }
 
     var setBorder = function (newBorder) {
         border = newBorder;
     }
-    
+
     var getScore = function () {
-    	return score;
+        return score;
     }
-    
+
     var incScore = function () {
-    	score++;
+        score++;
     }
 
     var update = function (keys) {
