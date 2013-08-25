@@ -185,11 +185,13 @@ var Player = function (startX, startY, startColor, startStatus) {
         getBorder: getBorder,
         getPrevX: getPrevX,
         getPrevY: getPrevY,
+        getScore: getScore,
         setX: setX,
         setY: setY,
         setColor: setColor,
         setStatus: setStatus,
         setBorder: setBorder,
+        incScore: incScore,
         update: update,
         draw: draw
     };

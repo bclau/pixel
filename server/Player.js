@@ -3,6 +3,7 @@ var Player = function (startX, startY, startColor, startStatus) {
     var y = startY;
     var color = (startColor) ? startColor : "#666666";
     var status = (startStatus) ? startStatus : 0;
+    var score = 0;
     var id;
 
     var getX = function () {
@@ -21,6 +22,10 @@ var Player = function (startX, startY, startColor, startStatus) {
         return status;
     }
 
+    var getScore = function () {
+    	return score;
+    }
+
     var setX = function (newX) {
         x = newX;
     }
@@ -37,15 +42,21 @@ var Player = function (startX, startY, startColor, startStatus) {
         status = newStatus;
     }
 
+    var incScore = function() {
+    	score++;
+    }
+
     return {
         getX: getX,
         getY: getY,
         getColor: getColor,
         getStatus: getStatus,
+        getScore: getScore,
         setX: setX,
         setY: setY,
         setColor: setColor,
         setStatus: setStatus,
+        incScore: incScore,
         id: id
     }
 };
