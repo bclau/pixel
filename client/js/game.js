@@ -102,17 +102,40 @@ var setEventHandlers = function () {
     socket.on("move player", onMovePlayer);
     socket.on("remove player", onRemovePlayer);
     socket.on("win", onWin);
+    socket.on("your score", onScoreReceive);
 
-    window.setInterval(function () { update() }, 100);
+    window.setInterval(function () { update(); }, 100);
 };
 
 // Win
 function onWin(e) {
-    if (e == "Congratulations!") {
-        console.log("Win!");
-        location.reload();
-    }
+	for(var i = 0; i < e.length; i++) {
+		if(e[i].id == localPlayer.getId()){
+			console.log("Win!");
+		    localPlayer.incScore();
+		    relocateLocalPlayer();
+		    return;
+		}	
+	}
+	
+    lose();
 };
+
+// Lose
+function lose() {
+	console.log("Lost...");
+	relocateLocalPlayer();
+};
+
+function relocateLocalPlayer() {
+	localPlayer.setX(Math.floor(Math.random() * xmax));
+	localPlayer.setY(Math.floor(Math.random() * ymax));
+	socket.emit("move player", { x: localPlayer.getX(), y: localPlayer.getY(), color: localPlayer.getColor(), status: localPlayer.getStatus() });
+}
+
+function onScoreReceive(data) {
+	localPlayer.SetStatus(data.status);
+}
 
 // Keyboard key down
 function onKeydown(e) {
@@ -154,9 +177,11 @@ function onNewPlayer(data) {
     var newPlayer = new Player(data.x, data.y, data.color, data.status);
 
     newPlayer.id = data.id;
+
     if (data.x < xmax && data.y < ymax) {
         map[data.y][data.x] = true;
     }
+
     remotePlayers.push(newPlayer);
 }
 
@@ -222,7 +247,8 @@ function update() {
 
         if (win) {
             //alert("Yeeay. Won.");
-            socket.emit("win", { x: localPlayer.getX(), y: localPlayer.getY(), color: localPlayer.getColor(), status: localPlayer.getStatus() });
+        	var winningPlayers = getWinners(win[0], win[1]);
+            socket.emit("win", { winners: winningPlayers } );
         }
     }
 };
@@ -235,6 +261,19 @@ function updatePlayerLocation(player) {
         map[player.getY()][player.getX()] = true;
         return checkGameSolution();
     }
+}
+
+function getWinners(minx, miny) {
+	var players = [];
+	var tplayer;
+	for(var i=0; i<miny; i++){
+		tplayer = remotePlayers[i];
+		if(tplayer.getX() >= minx && tplayer.getX() >= miny &&
+		   tplayer.getX() < minx + solution[0].length && tplayer.getY() < miny + solution.length)
+			players.push(tplayer);
+	}
+
+	return players;
 }
 
 /**************************************************
@@ -257,15 +296,14 @@ function checkSolutionForArea(minx, miny, maxx, maxy) {
     for (var j = 0; j <= ylen; j++)
         for (var i = 0; i <= xlen; i++) {
             if (checkSolution(minx + i, miny + j))
-                return true;
+            	return [minx + i, miny + j];
         }
-
     return false;
 }
 
 function checkSolution(minx, miny) {
-    //check for solution in the area (minx, miny) x (minx+solution.x, miny+solution.y)
-    for (var i = 0; i < solution.length; i++)
+	//check for solution in the area (minx, miny) x (minx+solution.x, miny+solution.y)
+	for (var i = 0; i < solution.length; i++)
         for (var j = 0; j < solution[i].length; j++) {
             // pixel area required and no player in it -> false!
             if (solution[i][j] && !map[miny + i][minx + j])

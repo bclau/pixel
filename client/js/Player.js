@@ -13,6 +13,7 @@ var Player = function (startX, startY, startColor, startStatus) {
     var prevX = x;
     var prevY = y;
     var color = (startColor) ? startColor : "#666666";
+    var score = 0;
     var status = (startStatus) ? startStatus : 0;
     var border = { Top: 1, Right: 1, Left: 1, Bottom: 1 };
     var id;
@@ -64,11 +65,19 @@ var Player = function (startX, startY, startColor, startStatus) {
     }
 
     var setStatus = function (newStatus) {
-        status = newStatus;
+        status = (newStatus && newStatus >= 0 && newStatus <= 1)? newStatus: status;
     }
 
     var setBorder = function (newBorder) {
         border = newBorder;
+    }
+    
+    var getScore = function () {
+    	return score;
+    }
+    
+    var incScore = function () {
+    	score++;
     }
 
     var update = function (keys) {

@@ -31,6 +31,7 @@ function onSocketConnection(client) {
     client.on("new player", onNewPlayer);
     client.on("move player", onMovePlayer);
     client.on("win", onWin);
+    client.on("update me", onUpdateRequest);
 }
 
 function onClientDisconnect() {
@@ -47,6 +48,44 @@ function onClientDisconnect() {
     this.broadcast.emit("remove player", { id: this.id });
 };
 
+function onUpdateRequest(requester) {
+	var player = playerById(requester.id);
+	if(player)
+		this.emit("update score", {status: getStatus(player) });
+}
+
+function getStatus(player) {
+	var range = getMaxScore() - getMinScore();
+	return player.getScore() / (range > 0)? range: player.getScore();
+}
+
+function getMinScore() {
+	return _getAbsoluteScore(players, lesser);
+}
+
+function getMaxScore() {
+	return _getAbsoluteScore(players, bigger);
+}
+
+lesser = function (a, b) {
+    return a > b;
+};
+
+bigger = function (a, b) {
+    return a < b;
+};
+
+function _getAbsoluteScore(object_array, condition) {
+    var absolute = object_array[0].getScore();
+    var temp;
+    for (var i in object_array) {
+        temp = object_array[i].getScore();
+        if (condition(absolute, temp))
+            absolute = temp;
+    }
+    return absolute;
+}
+
 function onNewPlayer(data) {
     var newPlayer = new Player(data.x, data.y, data.color, data.status);
     newPlayer.id = this.id;
@@ -56,7 +95,7 @@ function onNewPlayer(data) {
         existingPlayer = players[i];
         this.emit("new player", { id: existingPlayer.id, x: existingPlayer.getX(), y: existingPlayer.getY(), color: existingPlayer.getColor(), status: existingPlayer.getStatus() });
     }
-
+    
     players.push(newPlayer);
 };
 
@@ -76,8 +115,18 @@ function onMovePlayer(data) {
 };
 
 function onWin(data) {
-    this.broadcast.emit("win", "Congratulations!");
+	var temp;
+	var winners = data.winners;
+	for(var i=0; i < winners.length; i++) {
+		temp = winners[i];
+		for(var j=0; j < players.length; j++)
+			if(temp.id == players[j].id)
+				players[j].incScore();
+	}
+	
+    this.broadcast.emit("win", data);
 }
+
 
 function playerById(id) {
     var i;
