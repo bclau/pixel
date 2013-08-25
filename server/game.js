@@ -49,7 +49,7 @@ function onClientDisconnect() {
 };
 
 function onUpdateRequest(requester) {
-	var player = playerById(requester.id);
+	var player = playerById(this.id);
 	if(player)
 		this.emit("update score", {status: getStatus(player) });
 }
