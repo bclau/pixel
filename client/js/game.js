@@ -103,17 +103,31 @@ var setEventHandlers = function () {
     socket.on("move player", onMovePlayer);
     socket.on("remove player", onRemovePlayer);
     socket.on("win", onWin);
+    socket.on("lose", onLose);
+    socket.on("your score", onScoreReceive);
 
-    window.setInterval(function () { update() }, 100);
+    window.setInterval(function () { update(); }, 100);
 };
 
 // Win
 function onWin(e) {
-    if (e == null) {
+    if (e == "Congratulations!") {
         console.log("Win!");
         location.reload();
     }
 };
+
+// Lose
+function onLose(e) {
+    if (e == "Try again!") {
+        console.log("Lost...");
+        location.reload();
+    }
+};
+
+function onScoreReceive(data) {
+	localPlayer.SetStatus(data.status);
+}
 
 // Keyboard key down
 function onKeydown(e) {
@@ -212,7 +226,8 @@ function update() {
 
         if (win) {
             //alert("Yeeay. Won.");
-            socket.emit("win", { x: localPlayer.getX(), y: localPlayer.getY(), color: localPlayer.getColor(), status: localPlayer.getStatus() });
+        	var winningPlayers = getWinners(win[0], win[1]);
+            socket.emit("win", { winners: winningPlayers } );
         }
     }
 };
@@ -225,6 +240,19 @@ function updatePlayerLocation(player) {
         map[player.getY()][player.getX()] = true;
         return checkGameSolution();
     }
+}
+
+function getWinners(minx, miny) {
+	var players = [];
+	var tplayer;
+	for(var i=0; i<miny; i++){
+		tplayer = remotePlayers[i];
+		if(tplayer.getX() >= minx && tplayer.getX() >= miny &&
+		   tplayer.getX() < minx + solution[0].length && tplayer.getY() < miny + solution.length)
+			players.push(tplayer);
+	}
+
+	return players;
 }
 
 /**************************************************
@@ -247,9 +275,8 @@ function checkSolutionForArea(minx, miny, maxx, maxy) {
 	for(var j = 0; j <= ylen; j++)
 		for(var i = 0; i <= xlen; i++) {
 			if(checkSolution(minx + i, miny + j))
-				return true;
+				return [minx + i, miny + j];
 		}
-	
 	return false;
 }
 

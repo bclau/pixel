@@ -56,7 +56,7 @@ function onNewPlayer(data) {
         existingPlayer = players[i];
         this.emit("new player", { id: existingPlayer.id, x: existingPlayer.getX(), y: existingPlayer.getY(), color: existingPlayer.getColor(), status: existingPlayer.getStatus() });
     }
-
+    
     players.push(newPlayer);
 };
 
@@ -77,6 +77,10 @@ function onMovePlayer(data) {
 
 function onWin(data) {
     this.broadcast.emit("win", "Congratulations!");
+}
+
+function onLose(data) {
+    this.broadcast.emit("lose", "Try again!");
 }
 
 function playerById(id) {

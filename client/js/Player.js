@@ -62,7 +62,7 @@ var Player = function (startX, startY, startColor, startStatus) {
     }
 
     var setStatus = function (newStatus) {
-        status = newStatus;
+        status = (newStatus && newStatus >= 0 && newStatus <= 1)? newStatus: status;
     }
 
     var setBorder = function (newBorder) {
