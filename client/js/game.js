@@ -109,8 +109,9 @@ var setEventHandlers = function () {
 
 // Win
 function onWin(e) {
-	for(var i = 0; i < e.length; i++) {
-		if(e[i].id == localPlayer.getId()){
+	var winners = e.winners;
+	for(var i = 0; i < winners.length; i++) {
+		if(winners[i].id == localPlayer.id){
 			console.log("Win!");
 		    localPlayer.incScore();
 		    relocateLocalPlayer();
@@ -266,7 +267,7 @@ function updatePlayerLocation(player) {
 function getWinners(minx, miny) {
 	var players = [];
 	var tplayer;
-	for(var i=0; i<miny; i++){
+	for(var i=0; i<remotePlayers.length; i++){
 		tplayer = remotePlayers[i];
 		if(tplayer.getX() >= minx && tplayer.getX() >= miny &&
 		   tplayer.getX() < minx + solution[0].length && tplayer.getY() < miny + solution.length)
@@ -290,8 +291,12 @@ function checkGameSolution() {
 }
 
 function checkSolutionForArea(minx, miny, maxx, maxy) {
+	//console.log(minx + " " + miny + " " + maxx + " " + maxy);
     var xlen = maxx - minx - solution[0].length,
 		ylen = maxy - miny - solution.length;
+
+    xlen = xlen>0 ? xlen : 0;
+    ylen = ylen>0 ? ylen : 0;
 
     for (var j = 0; j <= ylen; j++)
         for (var i = 0; i <= xlen; i++) {
@@ -302,6 +307,7 @@ function checkSolutionForArea(minx, miny, maxx, maxy) {
 }
 
 function checkSolution(minx, miny) {
+	//console.log(minx + " " + miny);
 	//check for solution in the area (minx, miny) x (minx+solution.x, miny+solution.y)
 	for (var i = 0; i < solution.length; i++)
         for (var j = 0; j < solution[i].length; j++) {
