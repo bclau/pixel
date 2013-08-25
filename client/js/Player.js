@@ -12,6 +12,7 @@ var Player = function (startX, startY, startColor, startStatus) {
     var y = startY;
     var prevX = x;
     var prevY = y;
+    var score = 0;
     var color = (startColor) ? startColor : "#666666";
     var status = (startStatus) ? startStatus : 0;
     var border = { Top: 1, Right: 1, Left: 1, Bottom: 1 };
