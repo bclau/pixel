@@ -8,8 +8,8 @@ var canvas,            // Canvas DOM element
     remotePlayers,
     socket;
 
-var HOST = "http://share.ligaac.ro";
-//var HOST = "http://127.0.0.1";
+//var HOST = "http://share.ligaac.ro";
+var HOST = "http://127.0.0.1";
 
 var EFFICIENT_DRAW = false;
 
@@ -103,7 +103,6 @@ var setEventHandlers = function () {
     socket.on("move player", onMovePlayer);
     socket.on("remove player", onRemovePlayer);
     socket.on("win", onWin);
-    socket.on("lose", onLose);
     socket.on("your score", onScoreReceive);
 
     window.setInterval(function () { update(); }, 100);
@@ -111,19 +110,29 @@ var setEventHandlers = function () {
 
 // Win
 function onWin(e) {
-    if (e == "Congratulations!") {
-        console.log("Win!");
-        location.reload();
-    }
+	for(var i = 0; i < e.length; i++) {
+		if(e[i].id == localPlayer.getId()){
+			console.log("Win!");
+		    localPlayer.incScore();
+		    relocateLocalPlayer();
+		    return;
+		}	
+	}
+	
+    lose();
 };
 
 // Lose
-function onLose(e) {
-    if (e == "Try again!") {
-        console.log("Lost...");
-        location.reload();
-    }
+function lose() {
+	console.log("Lost...");
+	relocateLocalPlayer();
 };
+
+function relocateLocalPlayer() {
+	localPlayer.setX(Math.floor(Math.random() * xmax));
+	localPlayer.setY(Math.floor(Math.random() * ymax));
+	socket.emit("move player", { x: localPlayer.getX(), y: localPlayer.getY(), color: localPlayer.getColor(), status: localPlayer.getStatus() });
+}
 
 function onScoreReceive(data) {
 	localPlayer.SetStatus(data.status);
@@ -166,7 +175,9 @@ function onNewPlayer(data) {
     var newPlayer = new Player(data.x, data.y, data.color, data.status);
 
     newPlayer.id = data.id;
-    map[data.y][data.x] = true;
+    
+    if(data.x < xmax && data.y < ymax)
+    	map[data.y][data.x] = true;
     remotePlayers.push(newPlayer);
 }
 
@@ -265,12 +276,13 @@ function checkGameSolution() {
 		maxy = localPlayer.getY() + solution.length - 1;
     return checkSolutionForArea(
     	(minx>0) ? minx : 0, (miny>0) ? miny : 0,
-    	(maxx<xmax) ? maxx : xmax, (maxy<ymax) ? maxy : ymax);
+    	(maxx<xmax) ? maxx : xmax - 1, (maxy<ymax) ? maxy : ymax - 1);
 }
 
 function checkSolutionForArea(minx, miny, maxx, maxy) {
-	var xlen = maxx - solution[0].length,
-		ylen = maxy - solution.length;
+	console.log(minx + " " + maxx + " " + miny + " " + maxy);
+	var xlen = maxx - minx - solution[0].length,
+		ylen = maxy - miny - solution.length;
 	
 	for(var j = 0; j <= ylen; j++)
 		for(var i = 0; i <= xlen; i++) {
@@ -281,6 +293,7 @@ function checkSolutionForArea(minx, miny, maxx, maxy) {
 }
 
 function checkSolution(minx, miny) {
+	//console.log(minx + " " + (minx + solution[0].length) + " " + miny + " " + (miny + solution.length));
 	//check for solution in the area (minx, miny) x (minx+solution.x, miny+solution.y)
 	for (var i = 0; i < solution.length; i++)
         for (var j = 0; j < solution[i].length; j++) {
