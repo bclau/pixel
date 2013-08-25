@@ -20,6 +20,8 @@ var ymax = PixelSize;
 var solution;
 var map;
 
+var canvasPosition = { Top: 0, Right: 0, Bottom: 0, Left: 0 };
+var canvasLimits = { Top: 220, Right: 25, Bottom: 20, Left: 55 };
 
 /**************************************************
 ** GAME INITIALISATION
@@ -30,8 +32,7 @@ function init() {
     ctx = canvas.getContext("2d");
 
     // Maximise the canvas
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    onResize("");
 
     // Initialise keyboard controls
     keys = new Keys();
@@ -46,8 +47,8 @@ function init() {
     // The minus 10 (half a player size) stops the player being
     // placed right on the egde of the screen
 
-    xmax = Math.floor((canvas.width) / PixelSize);
-    ymax = Math.floor((canvas.height) / PixelSize);
+    xmax = Math.floor((canvas.width - canvasLimits.Left - canvasLimits.Right) / PixelSize);
+    ymax = Math.floor((canvas.height - canvasLimits.Top - canvasLimits.Bottom) / PixelSize);
 
     var startX = Math.floor(Math.random() * xmax);
     var startY = Math.floor(Math.random() * ymax);
@@ -109,7 +110,7 @@ var setEventHandlers = function () {
 
 // Win
 function onWin(e) {
-    if (e == null) {
+    if (e == "Congratulations!") {
         console.log("Win!");
         location.reload();
     }
@@ -132,9 +133,9 @@ function onKeyup(e) {
 //FIXME - adjust maxx and maxy and the boolean matrix
 // Browser window resize
 function onResize(e) {
-    // Maximise the canvas
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    // Maximize the canvas
+    canvas.width = Math.round((window.innerWidth - canvasPosition.Right - canvasPosition.Left) / PixelSize - 1) * PixelSize + 1;
+    canvas.height = Math.round((window.innerHeight - canvasPosition.Top - canvasPosition.Bottom) / PixelSize - 1) * PixelSize + 1;
 };
 
 function onSocketConnected() {
@@ -309,14 +310,14 @@ function grid_draw() {
 
     ctx.beginPath();
 
-    for (gridx = 0; gridx < canvas.width; gridx = gridx + PixelSize) {
-        ctx.moveTo(gridx, 0);
-        ctx.lineTo(gridx, canvas.height);
+    for (gridx = canvasLimits.Left; gridx < canvas.width - canvasLimits.Right; gridx = gridx + PixelSize) {
+        ctx.moveTo(gridx, canvasLimits.Top);
+        ctx.lineTo(gridx, canvas.height - canvasLimits.Bottom);
     };
 
-    for (gridy = 0; gridy < canvas.height; gridy = gridy + PixelSize) {
-        ctx.moveTo(0, gridy);
-        ctx.lineTo(canvas.width, gridy);
+    for (gridy = canvasLimits.Top; gridy < canvas.height - canvasLimits.Bottom; gridy = gridy + PixelSize) {
+        ctx.moveTo(canvasLimits.Left, gridy);
+        ctx.lineTo(canvas.width - canvasLimits.Right, gridy);
     };
 
     ctx.stroke();
@@ -327,7 +328,7 @@ function grid_draw() {
 **************************************************/
 function draw() {
     // Wipe the canvas clean
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.clearRect(canvasLimits.Left, canvasLimits.Top, canvas.width - canvasLimits.Right, canvas.height - canvasLimits.Bottom);
     grid_draw();
 
     var i;

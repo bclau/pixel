@@ -5,6 +5,8 @@
 var PixelSize = 40;
 var EFFICIENT_DRAW = false;
 
+var canvasLimits = { Top: 220, Right: 25, Bottom: 20, Left: 55 };
+
 var Player = function (startX, startY, startColor, startStatus) {
     var x = startX;
     var y = startY;
@@ -73,17 +75,21 @@ var Player = function (startX, startY, startColor, startStatus) {
         prevX = x,
         prevY = y;
 
+        if (!(keys.up || keys.down || keys.left || keys.right)) {
+            return;
+        }
+
         // Up key takes priority over down
         if (keys.up && y >= 1) {
             y -= 1;
-        } else if (keys.down) {
+        } else if (keys.down && (y < (canvas.height - canvasLimits.Top - canvasLimits.Bottom - 1) / PixelSize - 1)) {
             y += 1;
         };
 
         // Left key takes priority over right
         if (keys.left && x >= 1) {
             x -= 1;
-        } else if (keys.right) {
+        } else if (keys.right && (x < (canvas.width - canvasLimits.Left - canvasLimits.Right - 1) / PixelSize - 1)) {
             x += 1;
         };
 
@@ -102,9 +108,15 @@ var Player = function (startX, startY, startColor, startStatus) {
     */
 
     var pixel = function (ctx) {
+
+        if (x >= (canvas.width - canvasLimits.Left - canvasLimits.Right - 1) / PixelSize)
+            return;
+        if (y >= (canvas.height -canvasLimits.Top - canvasLimits.Bottom - 1) / PixelSize)
+            return;
+
         // draw block
         ctx.fillStyle = color;
-        ctx.fillRect(x * PixelSize, y * PixelSize, PixelSize, PixelSize);
+        ctx.fillRect(canvasLimits.Left + x * PixelSize, canvasLimits.Top + y * PixelSize, PixelSize, PixelSize);
 
         // draw lines (borders + status)
         ctx.lineWidth = 1;
@@ -112,22 +124,22 @@ var Player = function (startX, startY, startColor, startStatus) {
         // draw borders
         ctx.strokeStyle = "#000000";
         ctx.beginPath();
-        ctx.moveTo(x * PixelSize, y * PixelSize);
+        ctx.moveTo(canvasLimits.Left + x * PixelSize, canvasLimits.Top + y * PixelSize);
 
         if (border.Top == 1) {
-            ctx.lineTo((x + 1) * PixelSize, y * PixelSize);
+            ctx.lineTo(canvasLimits.Left + (x + 1) * PixelSize, canvasLimits.Top + y * PixelSize);
         }
 
         if (border.Right == 1) {
-            ctx.lineTo((x + 1) * PixelSize, (y + 1) * PixelSize);
+            ctx.lineTo(canvasLimits.Left + (x + 1) * PixelSize, canvasLimits.Top + (y + 1) * PixelSize);
         }
 
         if (border.Bottom == 1) {
-            ctx.lineTo(x * PixelSize, (y + 1) * PixelSize);
+            ctx.lineTo(canvasLimits.Left + x * PixelSize, canvasLimits.Top + (y + 1) * PixelSize);
         }
 
         if (border.Left == 1) {
-            ctx.lineTo(x * PixelSize, y * PixelSize);
+            ctx.lineTo(canvasLimits.Left + x * PixelSize, canvasLimits.Top + y * PixelSize);
         }
         ctx.stroke();
 
@@ -143,14 +155,14 @@ var Player = function (startX, startY, startColor, startStatus) {
         //            ctx.strokeStyle = "rgba(" + colorComponents.r + ", " + colorComponents.g + ", " + colorComponents.b + ", " + status + ")";
         ctx.strokeStyle = "rgba(" + 0 + ", " + 0 + ", " + 0 + ", " + status + ")";
         //        }
-        ctx.rect(x * PixelSize + Math.round(PixelSize / 3), y * PixelSize + Math.round(PixelSize / 3), Math.round(PixelSize / 3), Math.round(PixelSize / 3));
+        ctx.rect(canvasLimits.Left + x * PixelSize + Math.round(PixelSize / 3), canvasLimits.Top + y * PixelSize + Math.round(PixelSize / 3), Math.round(PixelSize / 3), Math.round(PixelSize / 3));
 
         ctx.stroke();
     }
 
     var draw = function (ctx) {
         if (EFFICIENT_DRAW == true) {
-            ctx.clearRect(prevX * PixelSize, prevY * PixelSize, PixelSize, PixelSize);
+            ctx.clearRect(canvasLimits.Left + prevX * PixelSize, canvasLimits.Top + prevY * PixelSize, PixelSize, PixelSize);
         }
 
         pixel(ctx);
