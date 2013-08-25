@@ -232,37 +232,37 @@ function updatePlayerLocation(player) {
 ** GAME WIN CHECK
 **************************************************/
 function checkGameSolution() {
-	var minx = localPlayer.getX() - solution[0].length + 1,
+    var minx = localPlayer.getX() - solution[0].length + 1,
 		miny = localPlayer.getY() - solution.length + 1,
 		maxx = localPlayer.getX() + solution[0].length - 1,
 		maxy = localPlayer.getY() + solution.length - 1;
     return checkSolutionForArea(
-    	(minx>0) ? minx : 0, (miny>0) ? miny : 0,
-    	(maxx<xmax) ? maxx : xmax, (maxy<ymax) ? maxy : ymax);
+    	(minx > 0) ? minx : 0, (miny > 0) ? miny : 0,
+    	(maxx < xmax) ? maxx : xmax, (maxy < ymax) ? maxy : ymax);
 }
 
 function checkSolutionForArea(minx, miny, maxx, maxy) {
-	var xlen = maxx - solution[0].length,
+    var xlen = maxx - solution[0].length,
 		ylen = maxy - solution.length;
-	
-	for(var j = 0; j <= ylen; j++)
-		for(var i = 0; i <= xlen; i++) {
-			if(checkSolution(minx + i, miny + j))
-				return true;
-		}
-	
-	return false;
+
+    for (var j = 0; j <= ylen; j++)
+        for (var i = 0; i <= xlen; i++) {
+            if (checkSolution(minx + i, miny + j))
+                return true;
+        }
+
+    return false;
 }
 
 function checkSolution(minx, miny) {
-	//check for solution in the area (minx, miny) x (minx+solution.x, miny+solution.y)
-	for (var i = 0; i < solution.length; i++)
+    //check for solution in the area (minx, miny) x (minx+solution.x, miny+solution.y)
+    for (var i = 0; i < solution.length; i++)
         for (var j = 0; j < solution[i].length; j++) {
-        	// pixel area required and no player in it -> false!
-            if (solution[i][j] && !map[miny + i][minx + j] )
+            // pixel area required and no player in it -> false!
+            if (solution[i][j] && !map[miny + i][minx + j])
                 return false;
         }
-	return true;
+    return true;
 }
 
 function _getMinX(object_array) {

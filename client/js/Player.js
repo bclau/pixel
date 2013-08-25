@@ -111,7 +111,7 @@ var Player = function (startX, startY, startColor, startStatus) {
 
         if (x >= (canvas.width - canvasLimits.Left - canvasLimits.Right - 1) / PixelSize)
             return;
-        if (y >= (canvas.height -canvasLimits.Top - canvasLimits.Bottom - 1) / PixelSize)
+        if (y >= (canvas.height - canvasLimits.Top - canvasLimits.Bottom - 1) / PixelSize)
             return;
 
         // draw block
