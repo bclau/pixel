@@ -2,7 +2,7 @@
 ** GAME PLAYER CLASS
 **************************************************/
 
-var PixelSize = 40;
+var PixelSize = 10;
 var EFFICIENT_DRAW = false;
 
 var canvasLimits = { Top: 220, Right: 25, Bottom: 20, Left: 55 };
@@ -82,14 +82,14 @@ var Player = function (startX, startY, startColor, startStatus) {
         // Up key takes priority over down
         if (keys.up && y >= 1) {
             y -= 1;
-        } else if (keys.down && (y < (canvas.height - canvasLimits.Top - canvasLimits.Bottom - 1) / PixelSize - 1)) {
+        } else if (keys.down && (y < Math.floor((canvas.height - canvasLimits.Top - canvasLimits.Bottom - 1) / PixelSize - 1))) {
             y += 1;
         };
 
         // Left key takes priority over right
         if (keys.left && x >= 1) {
             x -= 1;
-        } else if (keys.right && (x < (canvas.width - canvasLimits.Left - canvasLimits.Right - 1) / PixelSize - 1)) {
+        } else if (keys.right && (x < Math.floor((canvas.width - canvasLimits.Left - canvasLimits.Right - 1) / PixelSize - 1))) {
             x += 1;
         };
 
@@ -109,9 +109,9 @@ var Player = function (startX, startY, startColor, startStatus) {
 
     var pixel = function (ctx) {
 
-        if (x >= (canvas.width - canvasLimits.Left - canvasLimits.Right - 1) / PixelSize)
+        if (x >= Math.floor((canvas.width - canvasLimits.Left - canvasLimits.Right - 1) / PixelSize))
             return;
-        if (y >= (canvas.height - canvasLimits.Top - canvasLimits.Bottom - 1) / PixelSize)
+        if (y >= Math.floor((canvas.height - canvasLimits.Top - canvasLimits.Bottom - 1) / PixelSize))
             return;
 
         // draw block

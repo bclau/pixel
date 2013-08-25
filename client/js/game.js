@@ -8,12 +8,12 @@ var canvas,            // Canvas DOM element
     remotePlayers,
     socket;
 
-var HOST = "http://share.ligaac.ro";
-//var HOST = "http://127.0.0.1";
+//var HOST = "http://share.ligaac.ro";
+var HOST = "http://127.0.0.1";
 
 var EFFICIENT_DRAW = false;
 
-var PixelSize = 40;
+var PixelSize = 10;
 var xmax = PixelSize;
 var ymax = PixelSize;
 
@@ -47,9 +47,6 @@ function init() {
     // The minus 10 (half a player size) stops the player being
     // placed right on the egde of the screen
 
-    xmax = Math.floor((canvas.width - canvasLimits.Left - canvasLimits.Right) / PixelSize);
-    ymax = Math.floor((canvas.height - canvasLimits.Top - canvasLimits.Bottom) / PixelSize);
-
     var startX = Math.floor(Math.random() * xmax);
     var startY = Math.floor(Math.random() * ymax);
 
@@ -63,7 +60,7 @@ function init() {
     solution[1][1] = true;
 
     // Initialise the local player
-    localPlayer = new Player(startX, startY, "rgba(" + Math.round(Math.random() * 224 + 31) + "," + Math.round(Math.random() * 224 + 31) + "," + Math.round(Math.random() * 224 + 31) + ", 1.0)", 0.0);
+    localPlayer = new Player(startX, startY, "rgba(" + Math.floor(Math.random() * 224 + 31) + "," + Math.floor(Math.random() * 224 + 31) + "," + Math.floor(Math.random() * 224 + 31) + ", 1.0)", 0.0);
     if (EFFICIENT_DRAW == true) {
         localPlayer.draw(ctx);
     }
@@ -83,6 +80,7 @@ function initBooleanMatrix(n, m) {
         for (var j = 0; j < m; j++)
             matrix[i][j] = false;
     }
+
     return matrix;
 }
 
@@ -134,8 +132,11 @@ function onKeyup(e) {
 // Browser window resize
 function onResize(e) {
     // Maximize the canvas
-    canvas.width = Math.round((window.innerWidth - canvasPosition.Right - canvasPosition.Left) / PixelSize - 1) * PixelSize + 1;
-    canvas.height = Math.round((window.innerHeight - canvasPosition.Top - canvasPosition.Bottom) / PixelSize - 1) * PixelSize + 1;
+    canvas.width = Math.floor((window.innerWidth - canvasPosition.Right - canvasPosition.Left) / PixelSize - 1) * PixelSize + 1;
+    canvas.height = Math.floor((window.innerHeight - canvasPosition.Top - canvasPosition.Bottom) / PixelSize - 1) * PixelSize + 1;
+
+    xmax = Math.floor((canvas.width - canvasLimits.Left - canvasLimits.Right) / PixelSize);
+    ymax = Math.floor((canvas.height - canvasLimits.Top - canvasLimits.Bottom) / PixelSize);
 };
 
 function onSocketConnected() {
@@ -153,7 +154,9 @@ function onNewPlayer(data) {
     var newPlayer = new Player(data.x, data.y, data.color, data.status);
 
     newPlayer.id = data.id;
-    map[data.y][data.x] = true;
+    if (data.x < xmax && data.y < ymax) {
+        map[data.y][data.x] = true;
+    }
     remotePlayers.push(newPlayer);
 }
 
@@ -181,8 +184,14 @@ function onRemovePlayer(data) {
         console.log("Player not found: " + data.id);
         return;
     }
+    
+    var x = removePlayer.getX();
+    var y = removePlayer.getY();
 
-    map[removePlayer.getY()][removePlayer.getX()] = false;
+    if (x < xmax && y < ymax) {
+        map[y][x] = false;
+    }
+
     remotePlayers.splice(remotePlayers.indexOf(removePlayer), 1);
 }
 
@@ -238,12 +247,12 @@ function checkGameSolution() {
 		maxy = localPlayer.getY() + solution.length - 1;
     return checkSolutionForArea(
     	(minx > 0) ? minx : 0, (miny > 0) ? miny : 0,
-    	(maxx < xmax) ? maxx : xmax, (maxy < ymax) ? maxy : ymax);
+    	(maxx < xmax) ? maxx: xmax - 1, (maxy < ymax) ? maxy : ymax - 1);
 }
 
 function checkSolutionForArea(minx, miny, maxx, maxy) {
-    var xlen = maxx - solution[0].length,
-		ylen = maxy - solution.length;
+    var xlen = maxx - minx - solution[0].length,
+		ylen = maxy - miny - solution.length;
 
     for (var j = 0; j <= ylen; j++)
         for (var i = 0; i <= xlen; i++) {
