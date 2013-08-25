@@ -291,9 +291,8 @@ function checkGameSolution() {
 }
 
 function checkSolutionForArea(minx, miny, maxx, maxy) {
-	//console.log(minx + " " + miny + " " + maxx + " " + maxy);
-    var xlen = maxx - minx - solution[0].length,
-		ylen = maxy - miny - solution.length;
+    var xlen = maxx + 1 - minx - solution[0].length,
+		ylen = maxy + 1 - miny - solution.length;
 
     xlen = xlen>0 ? xlen : 0;
     ylen = ylen>0 ? ylen : 0;
@@ -307,7 +306,6 @@ function checkSolutionForArea(minx, miny, maxx, maxy) {
 }
 
 function checkSolution(minx, miny) {
-	//console.log(minx + " " + miny);
 	//check for solution in the area (minx, miny) x (minx+solution.x, miny+solution.y)
 	for (var i = 0; i < solution.length; i++)
         for (var j = 0; j < solution[i].length; j++) {
