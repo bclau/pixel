@@ -45,6 +45,10 @@ var Player = function (startX, startY, startColor, startStatus) {
     var getPrevY = function () {
         return prevY;
     }
+    
+    var getId = function () {
+    	return id;
+    }
 
     var setX = function (newX) {
         if (newX < 0)
@@ -186,6 +190,7 @@ var Player = function (startX, startY, startColor, startStatus) {
         getPrevX: getPrevX,
         getPrevY: getPrevY,
         getScore: getScore,
+        getId: getId,
         setX: setX,
         setY: setY,
         setColor: setColor,

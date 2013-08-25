@@ -8,8 +8,8 @@ var canvas,            // Canvas DOM element
     remotePlayers,
     socket;
 
-//var HOST = "http://share.ligaac.ro";
-var HOST = "http://127.0.0.1";
+var HOST = "http://share.ligaac.ro";
+//var HOST = "http://127.0.0.1";
 
 var EFFICIENT_DRAW = false;
 
@@ -106,24 +106,25 @@ var setEventHandlers = function () {
     socket.on("move player", onMovePlayer);
     socket.on("remove player", onRemovePlayer);
     socket.on("win", onWin);
-    socket.on("your score", onScoreReceive);
+    socket.on("update score", onScoreReceive);
 
     window.setInterval(function () { update(); }, 100);
 };
 
 // Win
 function onWin(e) {
-    var winners = e.winners;
-    for (var i = 0; i < winners.length; i++) {
-        if (winners[i].id == localPlayer.id) {
-            console.log("Win!");
-            localPlayer.incScore();
-            relocateLocalPlayer();
-            return;
-        }
-    }
-
-    lose();
+	socket.emit("update me", { x: localPlayer.getX(), y: localPlayer.getY(), color: localPlayer.getColor(), status: localPlayer.getStatus() });
+	var winners = e.winners;
+	for(var i = 0; i < winners.length; i++) {
+		if(winners[i].id === localPlayer.getId()){
+			console.log("Win!");
+		    localPlayer.incScore();
+		    relocateLocalPlayer();
+		    return;
+		}	
+	}
+	
+	lose();
 };
 
 // Lose
@@ -139,9 +140,9 @@ function relocateLocalPlayer() {
 }
 
 function onScoreReceive(data) {
-    localPlayer.SetStatus(data.status);
     solution = data.solution;
     draw_solution();
+	localPlayer.setStatus(data.status);
 }
 
 // Keyboard key down
