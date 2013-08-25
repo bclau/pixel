@@ -101,7 +101,7 @@ function generate_solution(index) {
     }
 }
 
-var maxTimer = 5;
+var maxTimer = 20;
 var timer = 0;
 function handle_solution() {
     timer++;

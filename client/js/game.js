@@ -8,8 +8,8 @@ var canvas,            // Canvas DOM element
     remotePlayers,
     socket;
 
-//var HOST = "http://share.ligaac.ro";
-var HOST = "http://127.0.0.1";
+var HOST = "http://share.ligaac.ro";
+//var HOST = "http://127.0.0.1";
 
 var EFFICIENT_DRAW = false;
 
