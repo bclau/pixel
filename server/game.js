@@ -163,7 +163,7 @@ function onClientDisconnect() {
 function onUpdateRequest(requester) {
     var player = playerById(requester.id);
     if (player)
-        this.emit("update score", { status: getStatus(player) });
+        this.emit("update score", { status: getStatus(player), newSolution: solution[3] });
 }
 
 function getStatus(player) {

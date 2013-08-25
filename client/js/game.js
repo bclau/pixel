@@ -8,8 +8,8 @@ var canvas,            // Canvas DOM element
     remotePlayers,
     socket;
 
-var HOST = "http://share.ligaac.ro";
-//var HOST = "http://127.0.0.1";
+//var HOST = "http://share.ligaac.ro";
+var HOST = "http://127.0.0.1";
 
 var EFFICIENT_DRAW = false;
 
@@ -140,6 +140,8 @@ function relocateLocalPlayer() {
 
 function onScoreReceive(data) {
     localPlayer.SetStatus(data.status);
+    solution = data.solution;
+    draw_solution();
 }
 
 // Keyboard key down
@@ -365,6 +367,25 @@ function _getAbsoluteY(object_array, condition) {
     return absolute;
 }
 
+/**************************************************
+** SOLUTION DRAW
+**************************************************/
+function solution_draw() {
+    var x;
+    var y;
+
+    var topbar = document.getElementById("topbar");
+    topbar.innerHTML = "";
+    for (y = 0; y < solution.length; y++) {
+        for (x = 0; x < solution[y].length; x++) {
+            if (solution[y][x] == true)
+                topbar.innerHTML += ".";
+            else
+                topbar.innerHTML += "X";
+        }
+        topbar.innerHTML += "<br>";
+    }
+}
 /**************************************************
 ** GRID DRAW
 **************************************************/
